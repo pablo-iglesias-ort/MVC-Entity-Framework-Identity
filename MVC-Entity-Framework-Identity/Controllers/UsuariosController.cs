@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -10,6 +11,7 @@ using MVC_Entity_Framework.Models;
 
 namespace MVC_Entity_Framework.Controllers
 {
+    [AllowAnonymous]
     public class UsuariosController : Controller
     {
         private readonly MVC_Entity_FrameworkContext _context;
@@ -21,6 +23,12 @@ namespace MVC_Entity_Framework.Controllers
 
         // GET: Usuarios
         public async Task<IActionResult> Ingresar(string returnUrl)
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Ingresar(Usuario usuario, string pass)
         {
             return View();
         }

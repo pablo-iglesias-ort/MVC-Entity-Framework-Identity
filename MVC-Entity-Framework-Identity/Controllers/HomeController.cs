@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using MVC_Entity_Framework.Models;
 
 namespace MVC_Entity_Framework.Controllers
 {
+	[Authorize(Roles = nameof(Rol.Estudiante))]
 	public class HomeController : Controller
 	{
 		private readonly ILogger<HomeController> _logger;
