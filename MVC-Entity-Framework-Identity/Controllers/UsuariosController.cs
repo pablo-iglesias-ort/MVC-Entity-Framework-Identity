@@ -1,7 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
+using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -30,18 +34,53 @@ namespace MVC_Entity_Framework.Controllers
         [HttpPost]
         public async Task<IActionResult> Ingresar(string usuario, string pass)
         {
-            var user = _context.Usuarios.FirstOrDefault(u => u.User == usuario);
-            if (user == null)
-            {
-                ViewBag.ErrorEnLogin = "Verifique el usuario y contraseña";
-                return View();
+            // Verificamos que ambos esten informados
+            if (!string.IsNullOrEmpty(usuario) && !string.IsNullOrEmpty(pass)){
+
+                // Verificamos que exista el usuario
+                var user = await _context.Usuarios.FirstOrDefaultAsync(u => u.User == usuario);
+                if (user != null)
+                {
+
+                    // Verificamos que coincida la contraseña
+                    var contraseña = Encoding.UTF8.GetBytes(pass);
+                    if (contraseña.SequenceEqual(user.Contraseña))
+                    {
+
+                        // Creamos los Claims (credencial de acceso con informacion del usuario)
+                        ClaimsIdentity identidad = new ClaimsIdentity(CookieAuthenticationDefaults.AuthenticationScheme);
+
+                        // Agregamos a la credencial el nombre de usuario
+                        identidad.AddClaim(new Claim(ClaimTypes.Name, usuario));
+                        // Agregamos a la credencial el nombre del estudiante/administrador
+                        identidad.AddClaim(new Claim(ClaimTypes.GivenName, user.Nombre));
+                        // Agregamos a la credencial el Rol
+                        identidad.AddClaim(new Claim(ClaimTypes.Role, user.Rol.ToString()));
+
+                        ClaimsPrincipal principal = new ClaimsPrincipal(identidad);
+
+                        // Ejecutamos el Login
+                        await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
+
+                        // Redirigimos a la pagina principal
+                        return RedirectToAction("Index", "Home");
+
+                    }                    
+                }
             }
 
+            ViewBag.ErrorEnLogin = "Verifique el usuario y contraseña";
+            return View();
 
-            return RedirectToAction("Index", "Home");
+            
         }
 
-        
+        public IActionResult AccesoDenegado()
+        {
+            return View();
+        }
+
+
         public IActionResult Registrarse()
         {
             return View();
@@ -54,96 +93,12 @@ namespace MVC_Entity_Framework.Controllers
             if (ModelState.IsValid)
             {
                 usuario.Id = Guid.NewGuid();
+                usuario.Contraseña = Encoding.UTF8.GetBytes(pass);
                 _context.Add(usuario);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Ingresar));
             }
             return View(usuario);
-        }
-
-        // GET: Usuarios/Edit/5
-        public async Task<IActionResult> Edit(Guid? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var usuario = await _context.Usuarios.FindAsync(id);
-            if (usuario == null)
-            {
-                return NotFound();
-            }
-            return View(usuario);
-        }
-
-        // POST: Usuarios/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,User,Nombre,Rol")] Usuario usuario)
-        {
-            if (id != usuario.Id)
-            {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(usuario);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!UsuarioExists(usuario.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Ingresar));
-            }
-            return View(usuario);
-        }
-
-        // GET: Usuarios/Delete/5
-        public async Task<IActionResult> Delete(Guid? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var usuario = await _context.Usuarios
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (usuario == null)
-            {
-                return NotFound();
-            }
-
-            return View(usuario);
-        }
-
-        // POST: Usuarios/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(Guid id)
-        {
-            var usuario = await _context.Usuarios.FindAsync(id);
-            _context.Usuarios.Remove(usuario);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Ingresar));
-        }
-
-        private bool UsuarioExists(Guid id)
-        {
-            return _context.Usuarios.Any(e => e.Id == id);
         }
     }
 }
