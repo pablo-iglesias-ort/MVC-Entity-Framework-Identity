@@ -94,6 +94,7 @@ namespace MVC_Entity_Framework.Controllers
             {
                 usuario.Id = Guid.NewGuid();
                 usuario.Contraseña = Encoding.UTF8.GetBytes(pass);
+                usuario.Rol = Rol.Estudiante;
                 _context.Add(usuario);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Ingresar));
