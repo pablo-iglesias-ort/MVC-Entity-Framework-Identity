@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - MVC_Entity_Framework</title>
+    <title>@ViewData["Title"] - MVC_Entity_Framework_Identity</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" />
 </head>
@@ -24,14 +24,42 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Estudiantes" asp-action="Index">Estudiantes</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Materias" asp-action="Index">Materias</a>
-                        </li>
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Estudiantes" asp-action="Index">Estudiantes</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Materias" asp-action="Index">Materias</a>
+                            </li>
+                        }
                     </ul>
                 </div>
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
+                        <ul class="navbar-nav flex-grow-1">
+                            <li class="nav-item float-right">
+                                <a class="nav-link text-success font-italic" asp-area="">@User.FindFirstValue(ClaimTypes.GivenName)</a>
+                            </li>
+                            <li class="nav-item float-right">
+                                <form asp-controller="Usuarios" asp-action="Salir" method="post">
+                                    <button type="submit" class="nav-link text-danger">Salir</button>
+                                </form>
+                            </li>
+                        </ul>
+                    </div>
+                }
+                else
+                {
+                    <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
+                        <ul class="navbar-nav flex-grow-1">
+                            <li class="nav-item">
+                                <a class="nav-link text-warning border border-primary bg-light" asp-area="" asp-controller="Usuarios" asp-action="Ingresar">Ingresar</a>
+                            </li>
+                        </ul>
+                    </div>
+                }
             </div>
         </nav>
     </header>

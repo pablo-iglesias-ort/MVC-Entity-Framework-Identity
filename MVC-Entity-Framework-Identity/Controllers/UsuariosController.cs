@@ -35,6 +35,9 @@ namespace MVC_Entity_Framework.Controllers
         [HttpPost]
         public async Task<IActionResult> Ingresar(string usuario, string pass)
         {
+            // Guardamos la URL a la que debemos redirigir al usuario
+            var urlIngreso = TempData["UrlIngreso"] as string;
+
             // Verificamos que ambos esten informados
             if (!string.IsNullOrEmpty(usuario) && !string.IsNullOrEmpty(pass)){
 
@@ -62,8 +65,7 @@ namespace MVC_Entity_Framework.Controllers
 
                         // Ejecutamos el Login
                         await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
-                        
-                        var urlIngreso = TempData["UrlIngreso"] as string;
+                                                
                         if (!string.IsNullOrEmpty(urlIngreso))
                         {
                             return Redirect(urlIngreso);
@@ -78,8 +80,8 @@ namespace MVC_Entity_Framework.Controllers
             }
 
             ViewBag.ErrorEnLogin = "Verifique el usuario y contraseña";
+            TempData["UrlIngreso"] = urlIngreso; // Volvemos a enviarla en el TempData para no perderla
             return View();
-
             
         }
 
