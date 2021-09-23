@@ -26,8 +26,9 @@ namespace MVC_Entity_Framework.Controllers
         }
 
         // GET: Usuarios
-        public async Task<IActionResult> Ingresar(string returnUrl)
+        public IActionResult Ingresar(string returnUrl)
         {
+            TempData["UrlIngreso"] = returnUrl;
             return View();
         }
 
@@ -61,10 +62,17 @@ namespace MVC_Entity_Framework.Controllers
 
                         // Ejecutamos el Login
                         await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
-
-                        // Redirigimos a la pagina principal
-                        return RedirectToAction("Index", "Home");
-
+                        
+                        var urlIngreso = TempData["UrlIngreso"] as string;
+                        if (!string.IsNullOrEmpty(urlIngreso))
+                        {
+                            return Redirect(urlIngreso);
+                        }
+                        else
+                        {
+                            // Redirigimos a la pagina principal
+                            return RedirectToAction("Index", "Home");
+                        }                        
                     }                    
                 }
             }
@@ -75,6 +83,16 @@ namespace MVC_Entity_Framework.Controllers
             
         }
 
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> Salir()
+        {
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+
+            return RedirectToAction("Index", "Home");
+        }
+
+        [Authorize]
         public IActionResult AccesoDenegado()
         {
             return View();

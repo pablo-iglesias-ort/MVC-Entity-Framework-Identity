@@ -9,8 +9,7 @@ using Microsoft.Extensions.Logging;
 using MVC_Entity_Framework.Models;
 
 namespace MVC_Entity_Framework.Controllers
-{
-	[Authorize(Roles = nameof(Rol.Estudiante))]
+{	
 	public class HomeController : Controller
 	{
 		private readonly ILogger<HomeController> _logger;
@@ -20,11 +19,13 @@ namespace MVC_Entity_Framework.Controllers
 			_logger = logger;
 		}
 
+		[AllowAnonymous]
 		public IActionResult Index()
 		{
 			return View();
 		}
 
+		[Authorize(Roles = nameof(Rol.Estudiante))]
 		public IActionResult Privacy()
 		{
 			return View();
