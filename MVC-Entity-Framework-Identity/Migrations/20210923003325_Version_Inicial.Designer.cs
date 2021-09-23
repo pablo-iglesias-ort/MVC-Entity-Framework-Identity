@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MVC_Entity_Framework.Migrations
 {
     [DbContext(typeof(MVC_Entity_FrameworkContext))]
-    [Migration("20210922231549_Version_Inicial")]
+    [Migration("20210923003325_Version_Inicial")]
     partial class Version_Inicial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -163,7 +163,7 @@ namespace MVC_Entity_Framework.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Usuario");
+                    b.ToTable("Usuarios");
                 });
 
             modelBuilder.Entity("MVC_Entity_Framework.Models.Calificacion", b =>

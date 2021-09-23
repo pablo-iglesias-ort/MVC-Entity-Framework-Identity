@@ -161,7 +161,7 @@ namespace MVC_Entity_Framework.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Usuario");
+                    b.ToTable("Usuarios");
                 });
 
             modelBuilder.Entity("MVC_Entity_Framework.Models.Calificacion", b =>

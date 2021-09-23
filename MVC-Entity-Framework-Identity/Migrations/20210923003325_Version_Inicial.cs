@@ -35,7 +35,7 @@ namespace MVC_Entity_Framework.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Usuario",
+                name: "Usuarios",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
@@ -46,7 +46,7 @@ namespace MVC_Entity_Framework.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Usuario", x => x.Id);
+                    table.PrimaryKey("PK_Usuarios", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -162,7 +162,7 @@ namespace MVC_Entity_Framework.Migrations
                 name: "MateriasEstudiantes");
 
             migrationBuilder.DropTable(
-                name: "Usuario");
+                name: "Usuarios");
 
             migrationBuilder.DropTable(
                 name: "Estudiantes");

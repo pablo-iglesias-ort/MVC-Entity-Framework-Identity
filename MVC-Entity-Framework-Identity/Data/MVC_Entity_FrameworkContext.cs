@@ -14,6 +14,6 @@ namespace MVC_Entity_Framework.Data
         public DbSet<Estudiante> Estudiantes { get; set; }
         public DbSet<Materia> Materias { get; set; }
         public DbSet<MateriaEstudiante> MateriasEstudiantes { get; set; }
-        public DbSet<MVC_Entity_Framework.Models.Usuario> Usuario { get; set; }
+        public DbSet<Usuario> Usuarios { get; set; }
     }
 }

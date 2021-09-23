@@ -28,8 +28,16 @@ namespace MVC_Entity_Framework.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Ingresar(Usuario usuario, string pass)
+        public async Task<IActionResult> Ingresar(string usuario, string pass)
         {
+            var user = _context.Usuarios.FirstOrDefault(u => u.User == usuario);
+            if (user == null)
+            {
+                ViewBag.ErrorEnLogin = "Verifique el usuario y contraseña";
+                return View();
+            }
+
+
             return RedirectToAction("Index", "Home");
         }
 
@@ -61,7 +69,7 @@ namespace MVC_Entity_Framework.Controllers
                 return NotFound();
             }
 
-            var usuario = await _context.Usuario.FindAsync(id);
+            var usuario = await _context.Usuarios.FindAsync(id);
             if (usuario == null)
             {
                 return NotFound();
@@ -112,7 +120,7 @@ namespace MVC_Entity_Framework.Controllers
                 return NotFound();
             }
 
-            var usuario = await _context.Usuario
+            var usuario = await _context.Usuarios
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (usuario == null)
             {
@@ -127,15 +135,15 @@ namespace MVC_Entity_Framework.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var usuario = await _context.Usuario.FindAsync(id);
-            _context.Usuario.Remove(usuario);
+            var usuario = await _context.Usuarios.FindAsync(id);
+            _context.Usuarios.Remove(usuario);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Ingresar));
         }
 
         private bool UsuarioExists(Guid id)
         {
-            return _context.Usuario.Any(e => e.Id == id);
+            return _context.Usuarios.Any(e => e.Id == id);
         }
     }
 }
