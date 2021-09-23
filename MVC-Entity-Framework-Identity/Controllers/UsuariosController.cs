@@ -30,39 +30,18 @@ namespace MVC_Entity_Framework.Controllers
         [HttpPost]
         public async Task<IActionResult> Ingresar(Usuario usuario, string pass)
         {
-            return View();
+            return RedirectToAction("Index", "Home");
         }
 
-        // GET: Usuarios/Details/5
-        public async Task<IActionResult> Details(Guid? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var usuario = await _context.Usuario
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (usuario == null)
-            {
-                return NotFound();
-            }
-
-            return View(usuario);
-        }
-
-        // GET: Usuarios/Create
-        public IActionResult Create()
+        
+        public IActionResult Registrarse()
         {
             return View();
         }
-
-        // POST: Usuarios/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,User,Nombre,Rol")] Usuario usuario)
+        public async Task<IActionResult> Registrarse(Usuario usuario, string pass)
         {
             if (ModelState.IsValid)
             {
