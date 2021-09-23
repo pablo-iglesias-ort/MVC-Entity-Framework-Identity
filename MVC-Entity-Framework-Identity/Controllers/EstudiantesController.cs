@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -10,6 +11,7 @@ using MVC_Entity_Framework.Models;
 
 namespace MVC_Entity_Framework.Controllers
 {
+    [Authorize]
     public class EstudiantesController : Controller
     {
         private readonly MVC_Entity_FrameworkContext _context;
@@ -43,20 +45,18 @@ namespace MVC_Entity_Framework.Controllers
             return View(estudiante);
         }
 
-        
 
-        // GET: Estudiantes/Create
+
+        [Authorize(Roles = nameof(Rol.Administrador))]
         public IActionResult Create()
         {
             return View();
         }
-
-        // POST: Estudiantes/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Dni,Nombre,Apellido,FechaDeNacimiento")] Estudiante estudiante)
+        [Authorize(Roles = nameof(Rol.Administrador))]
+        public async Task<IActionResult> Create(Estudiante estudiante)
         {
             if (ModelState.IsValid)
             {
@@ -68,7 +68,7 @@ namespace MVC_Entity_Framework.Controllers
             return View(estudiante);
         }
 
-        // GET: Estudiantes/Edit/5
+        [Authorize(Roles = nameof(Rol.Administrador))]
         public async Task<IActionResult> Edit(Guid? id)
         {
             if (id == null)
@@ -84,11 +84,9 @@ namespace MVC_Entity_Framework.Controllers
             return View(estudiante);
         }
 
-        // POST: Estudiantes/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = nameof(Rol.Administrador))]
         public async Task<IActionResult> Edit(Guid id, [Bind("Id,Dni,Nombre,Apellido,FechaDeNacimiento")] Estudiante estudiante)
         {
             if (id != estudiante.Id)
@@ -119,7 +117,7 @@ namespace MVC_Entity_Framework.Controllers
             return View(estudiante);
         }
 
-        // GET: Estudiantes/Delete/5
+        [Authorize(Roles = nameof(Rol.Administrador))]
         public async Task<IActionResult> Delete(Guid? id)
         {
             if (id == null)
@@ -137,9 +135,9 @@ namespace MVC_Entity_Framework.Controllers
             return View(estudiante);
         }
 
-        // POST: Estudiantes/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = nameof(Rol.Administrador))]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
             var estudiante = await _context.Estudiantes.FindAsync(id);
