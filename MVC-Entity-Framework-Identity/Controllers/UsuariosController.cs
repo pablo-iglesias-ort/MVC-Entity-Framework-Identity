@@ -19,6 +19,7 @@ namespace MVC_Entity_Framework.Controllers
     public class UsuariosController : Controller
     {
         private readonly MVC_Entity_FrameworkContext _context;
+        private readonly ISeguridad seguridad = new SeguridadBasica();
 
         public UsuariosController(MVC_Entity_FrameworkContext context)
         {
@@ -47,7 +48,7 @@ namespace MVC_Entity_Framework.Controllers
                 {
 
                     // Verificamos que coincida la contraseña
-                    var contraseña = Encoding.UTF8.GetBytes(pass);
+                    var contraseña = seguridad.EncriptarPass(pass);
                     if (contraseña.SequenceEqual(user.Contraseña))
                     {
 
@@ -113,11 +114,18 @@ namespace MVC_Entity_Framework.Controllers
             if (ModelState.IsValid)
             {
                 usuario.Id = Guid.NewGuid();
-                usuario.Contraseña = Encoding.UTF8.GetBytes(pass);
-                usuario.Rol = Rol.Estudiante;
-                _context.Add(usuario);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Ingresar));
+                if (seguridad.ValidarPass(pass))
+                {
+                    usuario.Contraseña = seguridad.EncriptarPass(pass);
+                    usuario.Rol = Rol.Estudiante;
+                    _context.Add(usuario);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Ingresar));
+                }
+                else
+                {
+                    ModelState.AddModelError(nameof(Usuario.Contraseña), "La contraseña no cumple con los requisitos");
+                }
             }
             return View(usuario);
         }

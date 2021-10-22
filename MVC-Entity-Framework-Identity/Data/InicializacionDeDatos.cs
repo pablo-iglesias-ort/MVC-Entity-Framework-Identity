@@ -1,4 +1,5 @@
-﻿using MVC_Entity_Framework.Models;
+﻿using MVC_Entity_Framework.Controllers;
+using MVC_Entity_Framework.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,9 +9,35 @@ namespace MVC_Entity_Framework.Data
 {
 	public static class InicializacionDeDatos
 	{
+		public static readonly ISeguridad seguridad = new SeguridadBasica();
+
 		public static void Inicializar(MVC_Entity_FrameworkContext context)
 		{
 			context.Database.EnsureCreated();
+
+			if (!context.Usuarios.Any())
+			{
+				var usuarioAdmin = new Usuario
+				{
+					Id = Guid.NewGuid(),
+					Nombre = "Admin",
+					User = "admin",
+					Contraseña = seguridad.EncriptarPass("admin"),
+					Rol = Rol.Administrador,
+				};				
+				var usuarioEstudiante = new Usuario
+				{
+					Id = Guid.NewGuid(),
+					Nombre = "Estudiante",
+					User = "estudiante",
+					Contraseña = seguridad.EncriptarPass("estudiante"),
+					Rol = Rol.Estudiante,
+				};
+
+				context.Usuarios.AddRange(usuarioAdmin, usuarioEstudiante);
+				context.SaveChanges();
+			}
+
 
 			if (context.MateriasEstudiantes.Any())
 			{

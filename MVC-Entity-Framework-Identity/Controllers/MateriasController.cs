@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -10,6 +11,7 @@ using MVC_Entity_Framework.Models;
 
 namespace MVC_Entity_Framework.Controllers
 {
+    [Authorize]
     public class MateriasController : Controller
     {
         private readonly MVC_Entity_FrameworkContext _context;
@@ -19,7 +21,8 @@ namespace MVC_Entity_Framework.Controllers
             _context = context;
         }
 
-        // GET: Materias
+        // GET: Materias        
+        [Authorize(Roles = "Administrador,Estudiante")]
         public async Task<IActionResult> Index()
         {
             return View(await _context.Materias.ToListAsync());
@@ -86,7 +89,7 @@ namespace MVC_Entity_Framework.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        [ValidateAntiForgeryToken]        
         public async Task<IActionResult> Edit(Guid id, [Bind("Id,Nombre")] Materia materia)
         {
             if (id != materia.Id)
